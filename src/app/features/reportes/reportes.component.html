@@ -1,13 +1,170 @@
 <div class="page-container">
   <div class="page-header">
-    <h1 class="page-title">Reportes</h1>
+    <h1 class="page-title">Reportes - Estado de Cuenta</h1>
   </div>
 
-  <div class="placeholder-container">
-    <div class="placeholder-icon">📊</div>
-    <h2 class="placeholder-title">Sección en Construcción</h2>
-    <p class="placeholder-text">
-      La funcionalidad de reportes se implementará próximamente.
-    </p>
+  <!-- Mensajes -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+
+  <!-- Formulario de búsqueda -->
+  <div class="search-form">
+    <div class="form-card">
+      <h3 class="form-card-title">Generar Estado de Cuenta</h3>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Cliente *</label>
+          <select 
+            class="form-input"
+            [(ngModel)]="clienteId"
+            name="clienteId">
+            <option value="0">Seleccione un cliente...</option>
+            <option *ngFor="let cliente of clientes" [value]="cliente.clienteId">
+              {{ cliente.nombre }} - {{ cliente.identificacion }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fecha Inicio *</label>
+          <input 
+            type="date" 
+            class="form-input"
+            [(ngModel)]="fechaInicio"
+            name="fechaInicio">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Fecha Fin *</label>
+          <input 
+            type="date" 
+            class="form-input"
+            [(ngModel)]="fechaFin"
+            name="fechaFin">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          class="btn btn-primary"
+          (click)="generarReporte()"
+          [disabled]="loading">
+          <span *ngIf="!loading">📊 Generar Reporte</span>
+          <span *ngIf="loading">⏳ Generando...</span>
+        </button>
+
+        <button 
+          class="btn btn-success"
+          (click)="descargarPdf()"
+          [disabled]="loading">
+          📥 Descargar PDF
+        </button>
+
+        <!-- <button 
+          class="btn btn-info"
+          (click)="verPdfEnNuevaPestana()"
+          [disabled]="loading">
+          👁️ Ver PDF
+        </button> -->
+
+        <button 
+          class="btn btn-secondary"
+          (click)="limpiar()">
+          🗑️ Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados del reporte -->
+  <div *ngIf="estadoCuenta" class="reporte-container">
+    <!-- Información del cliente -->
+    <div class="reporte-header">
+      <div class="cliente-info">
+        <h3>{{ estadoCuenta.cliente.nombre }}</h3>
+        <p>Identificación: {{ estadoCuenta.cliente.identificacion }}</p>
+      </div>
+      <div class="periodo-info">
+        <p><strong>Período:</strong></p>
+        <p>{{ fechaInicio }} al {{ fechaFin }}</p>
+      </div>
+    </div>
+
+    <!-- Cuentas -->
+    <div *ngFor="let cuenta of estadoCuenta.cuentas" class="cuenta-card">
+      <div class="cuenta-header">
+        <div class="cuenta-info">
+          <h4>Cuenta {{ cuenta.numeroCuenta }}</h4>
+          <span class="badge" [class.badge-ahorro]="cuenta.tipoCuenta === 'Ahorro'" 
+                              [class.badge-corriente]="cuenta.tipoCuenta === 'Corriente'">
+            {{ cuenta.tipoCuenta }}
+          </span>
+        </div>
+        <div class="cuenta-saldos">
+          <div class="saldo-item">
+            <span class="saldo-label">Saldo Inicial:</span>
+            <span class="saldo-valor">{{ formatCurrency(cuenta.saldoInicial) }}</span>
+          </div>
+          <div class="saldo-item">
+            <span class="saldo-label">Saldo Actual:</span>
+            <span class="saldo-valor saldo-actual">{{ formatCurrency(cuenta.saldoActual) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de movimientos -->
+      <div *ngIf="cuenta.movimientos.length > 0" class="movimientos-table">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Saldo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mov of cuenta.movimientos">
+              <td>{{ formatDate(mov.fecha) }}</td>
+              <td>
+                <span [class]="'badge badge-' + (mov.tipoMovimiento === 'Credito' ? 'credito' : 'debito')">
+                  {{ mov.tipoMovimiento === 'Credito' ? '↑ Crédito' : '↓ Débito' }}
+                </span>
+              </td>
+              <td [class]="mov.valor >= 0 ? 'valor-positivo' : 'valor-negativo'">
+                <strong>{{ formatCurrency(mov.valor) }}</strong>
+              </td>
+              <td>{{ formatCurrency(mov.saldo) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="cuenta.movimientos.length === 0" class="no-movimientos">
+        <p>No hay movimientos en este período</p>
+      </div>
+    </div>
+
+    <!-- Resumen total -->
+    <div class="resumen-total">
+      <h4>Resumen del Período</h4>
+      <div class="resumen-items">
+        <div class="resumen-item credito">
+          <span class="resumen-label">Total Créditos:</span>
+          <span class="resumen-valor">{{ formatCurrency(estadoCuenta.totalCreditos) }}</span>
+        </div>
+        <div class="resumen-item debito">
+          <span class="resumen-label">Total Débitos:</span>
+          <span class="resumen-valor">{{ formatCurrency(estadoCuenta.totalDebitos) }}</span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
