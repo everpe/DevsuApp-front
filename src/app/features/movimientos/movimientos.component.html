@@ -1,0 +1,134 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Movimientos</h1>
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      + Nuevo Movimiento
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    ⚠️ {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    ✓ {{ successMessage }}
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <app-search-bar (search)="onSearch($event)"></app-search-bar>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Cuenta</th>
+          <th>Tipo</th>
+          <th>Valor</th>
+          <th>Saldo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movimiento of movimientosFiltrados">
+          <td>{{ formatFecha(movimiento.fecha) }}</td>
+          <td><strong>{{ movimiento.numeroCuenta || movimiento.cuentaId }}</strong></td>
+          <td>
+            <span [class]="'badge ' + getTipoMovimientoClass(movimiento.tipoMovimiento)">
+              {{ movimiento.tipoMovimiento === 'Credito' ? '↑ Crédito' : '↓ Débito' }}
+            </span>
+          </td>
+          <td [class]="movimiento.valor >= 0 ? 'valor-positivo' : 'valor-negativo'">
+            <strong>{{ movimiento.valor >= 0 ? '+' : '' }}{{ movimiento.valor | number:'1.2-2' }}</strong>
+          </td>
+          <td><strong>{{ movimiento.saldo | number:'1.2-2' }}</strong></td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon btn-delete" (click)="deleteMovimiento(movimiento.id)" title="Eliminar">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="movimientosFiltrados.length === 0">
+          <td colspan="6" class="no-data">No se encontraron movimientos</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Nuevo Movimiento</h2>
+      <button class="modal-close" (click)="closeModal()">✕</button>
+    </div>
+    
+    <form class="modal-body" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label">Cuenta *</label>
+        <select 
+          class="form-input"
+          [(ngModel)]="movimientoForm.cuentaId"
+          name="cuentaId"
+          required>
+          <option value="0">Seleccione una cuenta...</option>
+          <option *ngFor="let cuenta of cuentas" [value]="cuenta.id">
+            {{ cuenta.numeroCuenta }} - {{ cuenta.tipoCuenta }} 
+            (Saldo: {{ cuenta.saldoActual | number:'1.2-2' }})
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo de Movimiento *</label>
+        <select 
+          class="form-input"
+          [(ngModel)]="movimientoForm.tipoMovimiento"
+          name="tipoMovimiento"
+          required>
+          <option *ngFor="let tipo of tiposMovimiento" [value]="tipo.value">
+            {{ tipo.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Valor *</label>
+        <input 
+          type="number" 
+          class="form-input"
+          [(ngModel)]="movimientoForm.valor"
+          name="valor"
+          step="0.01"
+          min="0.01"
+          required>
+        <small class="form-hint">
+          {{ movimientoForm.tipoMovimiento === 1 ? 'Depósito a la cuenta' : 'Retiro de la cuenta' }}
+        </small>
+      </div>
+
+      <div class="info-box">
+        <strong>⚠️ Validaciones:</strong>
+        <ul>
+          <li>Saldo insuficiente: No se permite retiro si saldo = 0</li>
+          <li>Límite diario: Máximo $1,000 en retiros por día</li>
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Registrar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

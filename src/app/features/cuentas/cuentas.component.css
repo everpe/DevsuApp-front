@@ -1,0 +1,12 @@
+/* Reutiliza los estilos de clientes.component.css y agrega estos adicionales */
+
+.badge-ahorro {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-corriente {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+

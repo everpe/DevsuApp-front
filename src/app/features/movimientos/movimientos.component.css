@@ -1,0 +1,52 @@
+/* Hereda todos los estilos de clientes/cuentas y agrega estos específicos */
+
+.badge-credito {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge-debito {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.valor-positivo {
+  color: #059669;
+  font-weight: 600;
+}
+
+.valor-negativo {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.modal-small {
+  max-width: 500px;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.info-box {
+  background-color: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.info-box ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.5rem;
+}
+
+.info-box li {
+  margin: 0.25rem 0;
+}
+
+/* Reutiliza el resto de estilos de clientes.component.css */
