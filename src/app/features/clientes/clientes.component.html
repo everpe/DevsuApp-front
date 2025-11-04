@@ -52,9 +52,9 @@
               <button class="btn-icon btn-edit" (click)="openEditModal(cliente)" title="Editar">
                 ✏️
               </button>
-              <button class="btn-icon btn-delete" (click)="deleteCliente(cliente.clienteId)" title="Eliminar">
+              <!-- <button class="btn-icon btn-delete" (click)="deleteCliente(cliente.clienteId)" title="Eliminar">
                 🗑️
-              </button>
+              </button> -->
             </div>
           </td>
         </tr>
@@ -67,7 +67,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal" *ngIf="showModal" (click)="closeModal()">
+<div class="modal" *ngIf="showModal">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2 class="modal-title">{{ isEditMode ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>

@@ -35,8 +35,8 @@ export class CuentasComponent implements OnInit {
   cuentaIdToEdit?: number;
 
   tiposCuenta = [
-    { value: 1, label: 'Ahorro' },
-    { value: 2, label: 'Corriente' }
+    { value: Number(1), label: 'Ahorro' },
+    { value: Number(2), label: 'Corriente' }
   ];
 
   constructor(
@@ -218,4 +218,8 @@ export class CuentasComponent implements OnInit {
   getTipoCuentaLabel(tipo: string): string {
     return tipo === 'Ahorro' ? 'Ahorro' : 'Corriente';
   }
+
+  getType(value: any): string {
+  return typeof value;
+}
 }

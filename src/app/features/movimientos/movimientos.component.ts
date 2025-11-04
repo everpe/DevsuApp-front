@@ -154,7 +154,7 @@ export class MovimientosComponent implements OnInit {
 
   showError(message: string): void {
     this.errorMessage = message;
-    setTimeout(() => this.errorMessage = '', 8000);
+    setTimeout(() => this.errorMessage = '', 16000);
   }
 
   showSuccess(message: string): void {

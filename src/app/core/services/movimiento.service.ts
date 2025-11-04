@@ -7,7 +7,7 @@ import { Movimiento, CreateMovimientoDto } from '../models/movimiento.model';
   providedIn: 'root'
 })
 export class MovimientoService {
-  private endpoint = 'movimientos';
+  private endpoint = 'Movimientos';
 
   constructor(private apiService: ApiService) {}
 

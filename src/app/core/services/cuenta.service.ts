@@ -24,6 +24,7 @@ export class CuentaService {
   }
 
   create(cuenta: CreateCuentaDto): Observable<Cuenta> {
+    console.log('Creating cuenta:', cuenta);
     return this.apiService.post<Cuenta>(this.endpoint, cuenta);
   }
 

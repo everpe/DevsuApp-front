@@ -62,7 +62,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal" *ngIf="showModal" (click)="closeModal()">
+<div class="modal" *ngIf="showModal" >
   <div class="modal-content modal-small" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2 class="modal-title">Nuevo Movimiento</h2>
@@ -78,7 +78,7 @@
           name="cuentaId"
           required>
           <option value="0">Seleccione una cuenta...</option>
-          <option *ngFor="let cuenta of cuentas" [value]="cuenta.id">
+          <option *ngFor="let cuenta of cuentas" [ngValue]="cuenta.id">
             {{ cuenta.numeroCuenta }} - {{ cuenta.tipoCuenta }} 
             (Saldo: {{ cuenta.saldoActual | number:'1.2-2' }})
           </option>
@@ -92,7 +92,7 @@
           [(ngModel)]="movimientoForm.tipoMovimiento"
           name="tipoMovimiento"
           required>
-          <option *ngFor="let tipo of tiposMovimiento" [value]="tipo.value">
+          <option *ngFor="let tipo of tiposMovimiento" [ngValue]="tipo.value">
             {{ tipo.label }}
           </option>
         </select>
